@@ -18,6 +18,7 @@ import fr.yamishadow.gsbandroid.outils.Serializer;
 public class MenuActivity extends AppCompatActivity {
 
     private AccesDistant accesDistant;
+    private Button btnFleche;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,7 @@ public class MenuActivity extends AppCompatActivity {
         // récupération des informations sérialisées
         recupSerialize() ;
         // chargement des méthodes événementielles
+        btnFleche = (Button) findViewById(R.id.cmdTransfert);
         cmdMenu_clic(((Button)findViewById(R.id.cmdKm)), KmActivity.class) ;
         cmdMenu_clic(((Button)findViewById(R.id.cmdHf)), HfActivity.class) ;
         cmdMenu_clic(((Button)findViewById(R.id.cmdRepas)), RepasActivity.class) ;
@@ -33,6 +35,13 @@ public class MenuActivity extends AppCompatActivity {
         cmdMenu_clic(((Button)findViewById(R.id.cmdEtape)), EtapeActivity.class) ;
         cmdMenu_clic(((Button)findViewById(R.id.cmdHfRecap)), HfRecapActivity.class) ;
         cmdTransfert_clic() ;
+
+        btnFleche.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     @Override
