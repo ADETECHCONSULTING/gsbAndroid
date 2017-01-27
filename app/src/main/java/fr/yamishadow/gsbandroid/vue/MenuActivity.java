@@ -40,7 +40,7 @@ public class MenuActivity extends AppCompatActivity {
         btnFleche.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MenuActivity.this, "En cours...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MenuActivity.this, "Prochainement...", Toast.LENGTH_SHORT).show();
             }
         });
     }
