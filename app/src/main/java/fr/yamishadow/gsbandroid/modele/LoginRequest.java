@@ -12,7 +12,7 @@ import java.util.Map;
  */
 
 public class LoginRequest extends StringRequest {
-    private static final String SERVADR = "http://192.168.0.12/GsbAndroid/login.php";
+    private static final String SERVADR = "http://siolms.pro:83/atraore/PPE/Android/login.php";
     private Map<String,String> users;
 
     /**

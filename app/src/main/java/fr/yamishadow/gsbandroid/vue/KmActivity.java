@@ -1,6 +1,7 @@
 package fr.yamishadow.gsbandroid.vue;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -10,14 +11,18 @@ import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fr.yamishadow.gsbandroid.R;
+import fr.yamishadow.gsbandroid.controleur.Controle;
 import fr.yamishadow.gsbandroid.controleur.Global;
+import fr.yamishadow.gsbandroid.modele.DatabaseHelper;
 import fr.yamishadow.gsbandroid.modele.FraisMois;
 import fr.yamishadow.gsbandroid.outils.Serializer;
 
 public class KmActivity extends AppCompatActivity {
-
+	private Controle controle;
+	private DatabaseHelper myDB;
 	// informations affichées dans l'activité
 	private int annee ;
 	private int mois ;
@@ -26,6 +31,7 @@ public class KmActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		controle = Controle.getInstance(this);
 		setContentView(R.layout.activity_km);
 		// modification de l'affichage du DatePicker
 		Global.changeAfficheDate((DatePicker) findViewById(R.id.datKm)) ;
@@ -37,6 +43,7 @@ public class KmActivity extends AppCompatActivity {
 		cmdPlus_clic() ;
 		cmdMoins_clic() ;
 		dat_clic() ;
+		myDB = controle.getMyDB();
 	}
 
 	@Override
@@ -50,15 +57,15 @@ public class KmActivity extends AppCompatActivity {
 	 * Valorisation des propriétés avec les informations affichées
 	 */
 	private void valoriseProprietes() {
-		//annee = ((DatePicker)findViewById(R.id.datKm)).getYear() ;
-		//mois = ((DatePicker)findViewById(R.id.datKm)).getMonth() + 1 ;
+		annee = ((DatePicker)findViewById(R.id.datKm)).getYear() ;
+		mois = ((DatePicker)findViewById(R.id.datKm)).getMonth() + 1 ;
 		// récupération de la qte correspondant au mois actuel
 		qte = 0 ;
 		int key = annee*100+mois ;
 		if (Global.listFraisMois.containsKey(key)) {
 			qte = Global.listFraisMois.get(key).getKm() ;
 		}
-		((TextView)findViewById(R.id.txtKm)).setText(String.valueOf(qte)) ;
+		((TextView)findViewById(R.id.txtKm)).setText(String.valueOf(qte));
 	}
 	
 	/**
@@ -79,7 +86,16 @@ public class KmActivity extends AppCompatActivity {
     	((Button)findViewById(R.id.cmdKmValider)).setOnClickListener(new Button.OnClickListener() {
     		public void onClick(View v) {
     			Serializer.serialize(Global.filename, Global.listFraisMois, KmActivity.this) ;
-    			retourActivityPrincipale() ;    		
+
+				//Integer isDeleted = myDB.deleteData(controle.getUser().getId()); //Supprime les lignes de l'utilisateur
+				//Toast.makeText(KmActivity.this, ""+isDeleted, Toast.LENGTH_SHORT).show();
+				//Insertion des données dans la base de donnée du telephone
+				boolean isInserted = myDB.insertData(controle.getUser().getId(),""+annee+0+mois,"km",qte);
+				if(isInserted == true){
+					retourActivityPrincipale() ;
+				}else {
+					Toast.makeText(KmActivity.this, "Les données ne sont pas enregistrées", Toast.LENGTH_SHORT).show();
+				}
     		}
     	}) ;    	
     }
@@ -143,4 +159,23 @@ public class KmActivity extends AppCompatActivity {
 		Intent intent = new Intent(KmActivity.this, MenuActivity.class) ;
 		startActivity(intent) ;   					
 	}
+
+	/**
+	 * Parcours la table (se trouvant dans le curseur) et l'enregistre dans un StringBuffer
+	 * @param res
+	 * @return
+     */
+	public String getCursorData(Cursor res){
+		StringBuffer buffer = new StringBuffer();
+		while(res.moveToNext()){
+			buffer.append("ID : "+res.getString(1)+"\n");
+			buffer.append("Mois : "+res.getString(2)+"\n");
+			buffer.append("IDFraisForfait : "+res.getString(3)+"\n");
+			buffer.append("Quantité : "+res.getString(4)+"\n");
+		}
+		res.close();
+		return buffer.toString();
+	}
+
+
 }

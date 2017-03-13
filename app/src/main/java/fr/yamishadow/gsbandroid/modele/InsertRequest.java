@@ -12,20 +12,17 @@ import java.util.Map;
  */
 
 public class InsertRequest extends StringRequest {
-    private static final String SERVADR = "http://192.168.0.12/GsbAndroid/insert.php";
+    private static final String SERVADR = "http://siolms.pro:83/atraore/PPE/Android/insert.php";
     private Map<String,String> users;
 
-    /**
-     * Constructeur de la requete Login
-     * @param email
-     * @param mdp
-     * @param listener
-     */
-    public InsertRequest(String email, String mdp, Response.Listener<String> listener) {
+
+    public InsertRequest(String id, String mois, String idfraisforfait, String quantite, Response.Listener<String> listener) {
         super(Method.POST, SERVADR, listener, null);
         users = new HashMap<>();
-        users.put("email", email);
-        users.put("mdp", mdp);
+        users.put("id", id);
+        users.put("mois", mois);
+        users.put("idfraisforfait", idfraisforfait);
+        users.put("quantite", quantite);
     }
 
     @Override

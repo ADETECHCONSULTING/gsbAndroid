@@ -8,9 +8,12 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import fr.yamishadow.gsbandroid.R;
+import fr.yamishadow.gsbandroid.controleur.Controle;
 import fr.yamishadow.gsbandroid.controleur.Global;
+import fr.yamishadow.gsbandroid.modele.DatabaseHelper;
 import fr.yamishadow.gsbandroid.modele.FraisMois;
 import fr.yamishadow.gsbandroid.outils.Serializer;
 
@@ -19,13 +22,16 @@ public class NuitActivity extends AppCompatActivity {
     private int annee;
     private int mois;
     private int qte;
+    private Controle controle;
+    private DatabaseHelper myDB;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nuit);
-
+        controle = Controle.getInstance(this);
+        myDB = controle.getMyDB();
         // modification de l'affichage du DatePicker
         Global.changeAfficheDate((DatePicker) findViewById(R.id.datNuit));
         // valorisation des propriétés
@@ -42,8 +48,9 @@ public class NuitActivity extends AppCompatActivity {
      * Valorisation des propriétés avec les informations affichées
      */
     private void valoriseProprietes() {
-        //annee = ((DatePicker)findViewById(R.id.datKm)).getYear() ;
-        //mois = ((DatePicker)findViewById(R.id.datKm)).getMonth() + 1 ;
+        annee = ((DatePicker)findViewById(R.id.datNuit)).getYear() ;
+        mois = ((DatePicker)findViewById(R.id.datNuit)).getMonth() + 1 ;
+
         // récupération de la qte correspondant au mois actuel
         qte = 0;
         int key = annee * 100 + mois;
@@ -71,7 +78,16 @@ public class NuitActivity extends AppCompatActivity {
         ((Button) findViewById(R.id.cmdNuitValider)).setOnClickListener(new Button.OnClickListener() {
             public void onClick(View v) {
                 Serializer.serialize(Global.filename, Global.listFraisMois, NuitActivity.this);
-                retourActivityPrincipale();
+
+                //Integer isDeleted = myDB.deleteData(controle.getUser().getId()); //Supprime les lignes de l'utilisateur
+                //Toast.makeText(KmActivity.this, ""+isDeleted, Toast.LENGTH_SHORT).show();
+                //Insertion des données dans la base de donnée du telephone
+                boolean isInserted = myDB.insertData(controle.getUser().getId(),""+annee+0+mois,"nui",qte);
+                if(isInserted == true){
+                    retourActivityPrincipale() ;
+                }else {
+                    Toast.makeText(NuitActivity.this, "Les données ne sont pas enregistrées", Toast.LENGTH_SHORT).show();
+                }
             }
         });
     }

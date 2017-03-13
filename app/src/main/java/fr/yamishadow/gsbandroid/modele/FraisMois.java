@@ -95,5 +95,5 @@ public class FraisMois implements Serializable {
 	public ArrayList<FraisHf> getLesFraisHf() {
 		return lesFraisHf ;
 	}
-	
+
 }
